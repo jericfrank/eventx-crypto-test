@@ -33,7 +33,7 @@ const Coin = ({ coins, actions, name, code }: CoinProps): React.ReactElement => 
 
     const interval = setInterval((): void => {
       actions.getCoins(code);
-    }, 3000 * INTERVAL_SECONDS);
+    }, 1000 * INTERVAL_SECONDS);
 
     return () => {
       clearInterval(interval);
