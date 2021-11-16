@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import { Card, EmptyCard, Row } from '.';
+import { Card, EmptyCard, Loader, Row } from '.';
 import { Code } from '../entities';
 import * as ActionCreators from '../actions';
 import { AppState } from '../reducers';
@@ -42,7 +42,9 @@ const Coin = ({ coins, actions, name, code }: CoinProps): React.ReactElement => 
 
   if (!coins || !coins[code]) {
     return (
-      <EmptyCard />
+      <EmptyCard>
+        <Loader />
+      </EmptyCard>
     );
   }
 
