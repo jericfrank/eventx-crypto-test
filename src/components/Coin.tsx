@@ -27,7 +27,9 @@ const INTERVAL_SECONDS = 30;
 
 const Coin = ({ coins, actions, name, code }: CoinProps): React.ReactElement => {
   useEffect(() => {
-    actions.getCoins(code);
+    if (!Object.keys(coins).length) {
+      actions.getCoins(code);
+    }
 
     const interval = setInterval((): void => {
       actions.getCoins(code);
@@ -36,7 +38,7 @@ const Coin = ({ coins, actions, name, code }: CoinProps): React.ReactElement => 
     return () => {
       clearInterval(interval);
     };
-  }, [actions, code]);
+  }, [actions, coins, code]);
 
   if (!coins || !coins[code]) {
     return (

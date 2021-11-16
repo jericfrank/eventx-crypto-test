@@ -2,6 +2,8 @@ import {
   AnyAction, applyMiddleware, compose, createStore,
 } from 'redux';
 import createSagaMiddleware from 'redux-saga';
+import { persistReducer, persistStore } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 import { SET_COIN } from '../constants';
 import { Coin } from '../entities';
 import rootSaga from '../sagas';
@@ -33,11 +35,21 @@ function reducer (
 
 const sagaMiddleware = createSagaMiddleware();
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+const persistConfig = {
+  key: 'root',
+  storage,
+};
+
+const persistedReducer = persistReducer(persistConfig, reducer);
+
 const store = createStore(
-  reducer,
+  persistedReducer,
   composeEnhancers(applyMiddleware(sagaMiddleware)),
 );
 
+const persistor = persistStore(store);
+
 sagaMiddleware.run(rootSaga);
 
-export default store;
+export { store, persistor };
