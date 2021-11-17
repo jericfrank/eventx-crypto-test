@@ -2,14 +2,12 @@ import {
   AnyAction, applyMiddleware, compose, createStore,
 } from 'redux';
 import createSagaMiddleware from 'redux-saga';
-import { persistReducer, persistStore } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-import { SET_COIN } from '../constants';
+import { SET_COINS } from '../constants';
 import { Coin } from '../entities';
 import rootSaga from '../sagas';
 
 export interface AppState {
-  coins: {[key: string]: Coin};
+  coins: Coin[] | null;
 }
 
 export interface DispatchActions {
@@ -17,16 +15,15 @@ export interface DispatchActions {
 }
 
 const initialState: AppState = {
-  coins: {},
+  coins: null,
 };
 
 function reducer (
   state: AppState = initialState, action: AnyAction,
 ): AppState {
   switch (action.type) {
-    case SET_COIN:
-      const payload = action.payload;
-      return { ...state, coins: {...state.coins, [payload.code]: payload.data} };
+    case SET_COINS:
+      return { ...state, coins: action.payload };
 
     default:
       return state;
@@ -36,20 +33,11 @@ function reducer (
 const sagaMiddleware = createSagaMiddleware();
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const persistConfig = {
-  key: 'root',
-  storage,
-};
-
-const persistedReducer = persistReducer(persistConfig, reducer);
-
 const store = createStore(
-  persistedReducer,
+  reducer,
   composeEnhancers(applyMiddleware(sagaMiddleware)),
 );
 
-const persistor = persistStore(store);
-
 sagaMiddleware.run(rootSaga);
 
-export { store, persistor };
+export default store;

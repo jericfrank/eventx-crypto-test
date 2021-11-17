@@ -1,16 +1,34 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators, Dispatch } from 'redux';
+import * as ActionCreators from './actions';
 import { Grid, Wrapper } from './components';
 import Coin from './components/Coin';
-import { ALT_COINS } from './constants';
-import { AltCoin } from './entities';
+import { AppState } from './reducers';
 
-const App = (): React.ReactElement => (
-  <Wrapper>
-    <h1>Cryptocurrency Realtime Price</h1>
-    <Grid>
-      { ALT_COINS.map((c: AltCoin, i: number) => <Coin key={ i.toString() } { ...c } />) }
-    </Grid>
-  </Wrapper>
-);
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  actions: bindActionCreators(ActionCreators, dispatch),
+});
 
-export default App;
+const mapStateToProps = (state: AppState) => ({
+  coins: state.coins,
+});
+
+type AppProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
+
+const App = ({ actions, coins }: AppProps): React.ReactElement => {
+  useEffect(() => {
+    actions.getCoins();
+  }, [actions]);
+
+  return (
+    <Wrapper>
+      <h1>Cryptocurrency Realtime Price</h1>
+      <Grid>
+        { coins && coins.map((c, i) => <Coin key={ i.toString() } coin={ c } />) }
+      </Grid>
+    </Wrapper>
+  );
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

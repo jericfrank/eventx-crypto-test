@@ -3,20 +3,19 @@ import { takeEvery, call, put } from 'redux-saga/effects';
 import axios from 'axios';
 import { GET_COINS } from '../constants';
 import {
-  setCoin,
-  getCoins as getCoinActions,
+  setCoins,
 } from '../actions';
 
 const request = axios.create({
-  baseURL: 'https://api.cryptonator.com/api/',
+  baseURL: 'http://localhost:3001/',
+  withCredentials: false,
 });
 
-export function* getCoins (actions: ReturnType<typeof getCoinActions>): SagaIterator {
+export function* getCoins (): SagaIterator {
   try {
-    const code = actions.payload;
-    const { data } = yield call(request.get.bind(null, `ticker/${ code }`));
+    const { data } = yield call(request.get.bind(null, 'coins'));
 
-    yield put(setCoin({ code, data }));
+    yield put(setCoins(data));
   } catch (e) {
     console.error(e);
   }
