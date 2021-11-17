@@ -7,7 +7,7 @@ import { Coin } from '../entities';
 import rootSaga from '../sagas';
 
 export interface AppState {
-  coins: Coin[] | null;
+  coins: Coin[];
 }
 
 export interface DispatchActions {
@@ -15,7 +15,7 @@ export interface DispatchActions {
 }
 
 const initialState: AppState = {
-  coins: null,
+  coins: [],
 };
 
 function reducer (

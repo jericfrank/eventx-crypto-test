@@ -1,9 +1,13 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
+import io from 'socket.io-client';
+
 import * as ActionCreators from './actions';
 import { Grid, Wrapper } from './components';
-import Coin from './components/Coin';
+import CoinComponent from './components/Coin';
+import { HOST_URL } from './constants';
+import { Coin } from './entities';
 import { AppState } from './reducers';
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -18,6 +22,13 @@ type AppProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispat
 
 const App = ({ actions, coins }: AppProps): React.ReactElement => {
   useEffect(() => {
+    const socket = io(`${ HOST_URL }/ws`);
+    socket.on('UPDATE_COINS', (data: Coin[]): void => {
+      actions.setCoins(data);
+    });
+  }, [actions]);
+
+  useEffect(() => {
     actions.getCoins();
   }, [actions]);
 
@@ -25,7 +36,7 @@ const App = ({ actions, coins }: AppProps): React.ReactElement => {
     <Wrapper>
       <h1>Cryptocurrency Realtime Price</h1>
       <Grid>
-        { coins && coins.map((c, i) => <Coin key={ i.toString() } coin={ c } />) }
+        { coins.map((c, i) => <CoinComponent key={ i.toString() } coin={ c } />) }
       </Grid>
     </Wrapper>
   );

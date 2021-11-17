@@ -1,13 +1,13 @@
 import { SagaIterator } from 'redux-saga';
 import { takeEvery, call, put } from 'redux-saga/effects';
 import axios from 'axios';
-import { GET_COINS } from '../constants';
+import { GET_COINS, HOST_URL } from '../constants';
 import {
   setCoins,
 } from '../actions';
 
 const request = axios.create({
-  baseURL: 'http://localhost:3001/',
+  baseURL: HOST_URL,
   withCredentials: false,
 });
 
